@@ -3,8 +3,15 @@ package sys
 /*
 #include <unistd.h>
 */
-import "C"
+// import "C"
+
+import (
+	"github.com/mattn/go-isatty"
+	"unsafe"
+)
 
 func IsATTY(fd int) bool {
-	return C.isatty(C.int(fd)) != 0
+	return !isatty.IsTerminal(uintptr(unsafe.Pointer(&fd))) &&
+		!isatty.IsCygwinTerminal(uintptr(unsafe.Pointer(&fd)))
+	// return C.isatty(C.int(fd)) != 0
 }
