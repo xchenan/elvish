@@ -195,7 +195,7 @@ func trimToWindow(s []string, selected, max int) ([]string, int) {
 // refresh redraws the line editor. The dot is passed as an index into text;
 // the corresponding position will be calculated.
 func (w *Writer) refresh(es *editorState, fullRefresh bool) error {
-	height, width := sys.GetWinsize(int(w.file.Fd()))
+	height, width, _ := sys.GetWinsize(int(w.file.Fd()))
 	er := &editorRenderer{es, height, nil}
 	buf := render(er, width)
 	return w.commitBuffer(er.bufNoti, buf, fullRefresh)

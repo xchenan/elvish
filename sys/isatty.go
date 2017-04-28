@@ -7,11 +7,10 @@ package sys
 
 import (
 	"github.com/mattn/go-isatty"
-	"unsafe"
 )
 
 func IsATTY(fd int) bool {
-	return !isatty.IsTerminal(uintptr(unsafe.Pointer(&fd))) &&
-		!isatty.IsCygwinTerminal(uintptr(unsafe.Pointer(&fd)))
+	return isatty.IsTerminal(uintptr(fd)) ||
+		isatty.IsCygwinTerminal(uintptr(fd))
 	// return C.isatty(C.int(fd)) != 0
 }

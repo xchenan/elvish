@@ -19,13 +19,12 @@ int e() {
 // import "C"
 import (
 	"syscall"
-	"unsafe"
 )
 
 func Tcgetpgrp(fd int) (int, error) {
 	var pid int
-	_, _, err := syscall.RawSyscall(syscall.SYS_IOCTL, uintptr(unsafe.Pointer(&fd)),
-		uintptr(syscall.TIOCGPGRP), uintptr(unsafe.Pointer(&pid)))
+	_, _, err := syscall.RawSyscall(syscall.SYS_IOCTL, uintptr(fd),
+		uintptr(syscall.TIOCGPGRP), uintptr(pid))
 	return pid, err
 	//	i := C.get(C.int(fd))
 	//	if i == -1 {
@@ -35,8 +34,8 @@ func Tcgetpgrp(fd int) (int, error) {
 }
 
 func Tcsetpgrp(fd int, pid int) error {
-	_, _, err := syscall.RawSyscall(syscall.SYS_IOCTL, uintptr(unsafe.Pointer(&fd)),
-		uintptr(syscall.TIOCSPGRP), uintptr(unsafe.Pointer(&pid)))
+	_, _, err := syscall.RawSyscall(syscall.SYS_IOCTL, uintptr(fd),
+		uintptr(syscall.TIOCSPGRP), uintptr(pid))
 	//	i := C.set(C.int(fd), C.pid_t(pid))
 	//	if i != 0 {
 	//		return syscall.Errno(C.e())

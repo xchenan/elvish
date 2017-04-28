@@ -11,12 +11,33 @@ void getwinsize(int fd, int *row, int *col) {
 	*col = wsz.ws_col;
 }
 */
-import "C"
+// import "C"
+
+import (
+	"unsafe"
+
+	"golang.org/x/sys/unix"
+)
 
 // GetWinsize queries the size of the terminal referenced by the given file
 // descriptor.
-func GetWinsize(fd int) (row, col int) {
-	var r, c C.int
-	C.getwinsize(C.int(fd), &r, &c)
-	return int(r), int(c)
+
+type winSize struct {
+	row    uint16
+	col    uint16
+	xpixel uint16 // unused
+	Ypixel uint16 // unused
+}
+
+func GetWinsize(fd int) (row int, col int, err error) {
+	ws := winSize{}
+
+	if err := ioctl(uintptr(fd),
+		unix.TIOCGWINSZ, unsafe.Pointer(&ws)); err != nil {
+		return -1, -1, err
+	}
+	return int(ws.row), int(ws.col), nil
+	//	var r, c C.int
+	//	C.getwinsize(C.int(fd), &r, &c)
+	//	return int(r), int(c)
 }

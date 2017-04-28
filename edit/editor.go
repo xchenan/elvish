@@ -91,6 +91,8 @@ type editorState struct {
 
 // NewEditor creates an Editor.
 func NewEditor(file *os.File, sigs chan os.Signal, ev *eval.Evaler, st *store.Store) *Editor {
+	fmt.Println("create new Editor")
+	defer fmt.Println("done with creation")
 	seq := -1
 	if st != nil {
 		var err error
@@ -210,11 +212,11 @@ func (ed *Editor) insertAtDot(text string) {
 
 func setupTerminal(file *os.File) (*sys.Termios, error) {
 	fd := int(file.Fd())
+
 	term, err := sys.NewTermiosFromFd(fd)
 	if err != nil {
 		return nil, fmt.Errorf("can't get terminal attribute: %s", err)
 	}
-
 	savedTermios := term.Copy()
 
 	term.SetICanon(false)
@@ -233,7 +235,6 @@ func setupTerminal(file *os.File) (*sys.Termios, error) {
 			return nil, fmt.Errorf("can't flush input: %s", err)
 		}
 	*/
-
 	return savedTermios, nil
 }
 
@@ -249,7 +250,7 @@ func (ed *Editor) startReadLine() error {
 	}
 	ed.savedTermios = savedTermios
 
-	_, width := sys.GetWinsize(int(ed.file.Fd()))
+	_, width, _ := sys.GetWinsize(int(ed.file.Fd()))
 	/*
 		Write a lackEOLRune if the cursor is not in the leftmost column. This is
 		done as follows:
